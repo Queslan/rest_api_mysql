@@ -2,9 +2,9 @@ package com.example.rest_api_mysql.controllers;
 
 import com.example.rest_api_mysql.services.MeetingService;
 import com.example.rest_api_mysql.models.Meeting;
-import com.example.rest_api_mysql.repositories.MeetingRepository;
-import enums.Priority;
-import enums.Type;
+import com.example.rest_api_mysql.enums.Priority;
+import com.example.rest_api_mysql.enums.Type;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -15,44 +15,41 @@ import java.util.Optional;
 
 @RestController
 public class MeetingController {
-
-    private final MeetingRepository meetingRepository;
     private final MeetingService meetingService;
 
-    public MeetingController(MeetingRepository meetingRepository, MeetingService meetingService) {
-        this.meetingRepository = meetingRepository;
+    public MeetingController(MeetingService meetingService) {
         this.meetingService = meetingService;
     }
 
     @GetMapping("/meetings")
     public Iterable<Meeting> all() {
-        return meetingRepository.findAll();
+        return meetingService.findAllMeetings();
     }
 
     @GetMapping("/meetings/{id}")
     public Optional<Meeting> findMeetingById(@PathVariable Long id) {
-        return meetingRepository.findById(id);
+        return meetingService.findMeetingById(id);
     }
 
     @GetMapping("meetings/{date}/{time}")
     public List<Meeting> findMeetingByDate(@PathVariable Date date, @PathVariable Time time) {
-        return meetingRepository.findMeetingByDateAndTime(date, time);
+        return meetingService.findMeetingByDateAndTime(date, time);
     }
 
     @PostMapping("/meetings")
     public Meeting addMeeting(@RequestBody Meeting meeting) {
-        return meetingRepository.save(meeting);
+        return meetingService.addMeeting(meeting);
     }
 
     @PutMapping("/meetings")
     public Meeting changeMeeting(@RequestBody Meeting meeting) {
-        return meetingRepository.save(meeting);
+        return meetingService.changeMeeting(meeting);
     }
 
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Meeting does not exist")
     @DeleteMapping("/meetings/{id}")
-    public String deleteMeeting(@PathVariable Long id) {
-        meetingRepository.deleteById(id);
-        return "Deleted.";
+    public void deleteMeeting(@PathVariable Long id) {
+         meetingService.deleteMeeting(id);
     }
     @GetMapping("/meetings/priorities")
     public List<Priority> getAllPriorities()  {
@@ -65,6 +62,6 @@ public class MeetingController {
 
     @GetMapping("/meetings/sorted-by-date")
     public List<Meeting> sortMeetingsByDate() {
-        return meetingRepository.sortMeetingsByDate();
+        return meetingService.sortMeetingsByDate();
     }
 }

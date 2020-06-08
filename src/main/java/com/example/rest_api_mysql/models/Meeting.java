@@ -1,7 +1,7 @@
 package com.example.rest_api_mysql.models;
 
-import enums.Priority;
-import enums.Type;
+import com.example.rest_api_mysql.enums.Priority;
+import com.example.rest_api_mysql.enums.Type;
 
 import javax.persistence.*;
 import java.sql.Date;
